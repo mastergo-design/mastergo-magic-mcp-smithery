@@ -32,16 +32,23 @@ export const configSchema = z.object({
 });
 
 // 导出 createServer 函数，Smithery 要求
-export default function createServer({ config }: { config: z.infer<typeof configSchema> }) {
+export default function createServer({ config }: { config?: z.infer<typeof configSchema> }) {
+  // 处理配置，如果 config 为空或未定义，使用默认值
+  const safeConfig: z.infer<typeof configSchema> = config || {
+    url: "https://mastergo.com",
+    debug: false,
+    noRule: false,
+  };
+  
   // 如果 token 为空（Smithery 扫描时），使用占位符
-  const token = config.token || "placeholder-for-scanning";
+  const token = safeConfig.token || "placeholder-for-scanning";
   
   const serverConfig: ServerConfig = {
     token: token,
-    url: config.url,
-    rules: config.rules,
-    debug: config.debug,
-    noRule: config.noRule,
+    url: safeConfig.url || "https://mastergo.com",
+    rules: safeConfig.rules,
+    debug: safeConfig.debug || false,
+    noRule: safeConfig.noRule || false,
   };
 
   if (serverConfig.debug) {
