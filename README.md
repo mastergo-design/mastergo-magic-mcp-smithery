@@ -1,5 +1,6 @@
 # MasterGo Magic MCP
 
+[![Smithery Badge](https://smithery.ai/badge/master/mastergo-magic-mcp-smithery)](https://smithery.ai/server/master/mastergo-magic-mcp-smithery)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/mastergo-design/mastergo-magic-mcp)
 
 MasterGo Magic MCP is a standalone MCP (Model Context Protocol) service designed to connect MasterGo design tools with AI models. It enables AI models to directly retrieve DSL data from MasterGo design files.
