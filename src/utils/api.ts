@@ -19,7 +19,7 @@ export interface CodeResponse {
 
 // 配置接口
 export interface ServerConfig {
-  token: string;
+  token?: string;
   url?: string;
   rules?: string[];
   debug?: boolean;

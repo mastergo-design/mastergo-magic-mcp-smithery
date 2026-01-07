@@ -9,7 +9,10 @@ import type { ServerConfig } from "./utils/api.js";
 
 // 导出配置模式，用于 Smithery 自动生成配置表单
 export const configSchema = z.object({
-  token: z.string().describe("MasterGo API token"),
+  token: z
+    .string()
+    .optional()
+    .describe("MasterGo API token (required for tool execution, optional for server scanning)"),
   url: z
     .string()
     .default("https://mastergo.com")
@@ -30,8 +33,11 @@ export const configSchema = z.object({
 
 // 导出 createServer 函数，Smithery 要求
 export default function createServer({ config }: { config: z.infer<typeof configSchema> }) {
+  // 如果 token 为空（Smithery 扫描时），使用占位符
+  const token = config.token || "placeholder-for-scanning";
+  
   const serverConfig: ServerConfig = {
-    token: config.token,
+    token: token,
     url: config.url,
     rules: config.rules,
     debug: config.debug,
