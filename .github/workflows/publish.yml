@@ -1,0 +1,117 @@
+name: Publish to NPM
+
+on:
+  workflow_dispatch:
+    inputs:
+      release-type:
+        description: "Release type"
+        required: true
+        default: "patch"
+        type: "choice"
+        options:
+          - "patch"
+          - "minor"
+          - "major"
+          - "beta"
+          - "alpha"
+      version-increment:
+        description: "Version increment (beta and alpha)"
+        required: false
+        default: "0"
+        type: "choice"
+        options:
+          - "0"
+          - "1"
+          - "2"
+          - "3"
+          - "4"
+          - "5"
+
+# Add permission configuration
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18.x"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      - name: Get current version
+        id: get-current-version
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Version update (official version)
+        if: ${{ github.event.inputs.release-type == 'patch' || github.event.inputs.release-type == 'minor' || github.event.inputs.release-type == 'major' }}
+        run: npm version ${{ github.event.inputs.release-type }} --no-git-tag-version
+
+      - name: Version update (Beta version - first time)
+        if: ${{ github.event.inputs.release-type == 'beta' && !contains(steps.get-current-version.outputs.version, 'beta') }}
+        run: |
+          npm --no-git-tag-version version prerelease --preid=beta
+          # If a specific increment number is needed, execute additional increments
+          if [ "${{ github.event.inputs.version-increment }}" != "0" ]; then
+            for i in $(seq 1 ${{ github.event.inputs.version-increment }}); do
+              npm --no-git-tag-version version prerelease --preid=beta
+            done
+          fi
+
+      - name: Version update (Beta version - increment)
+        if: ${{ github.event.inputs.release-type == 'beta' && contains(steps.get-current-version.outputs.version, 'beta') }}
+        run: |
+          # For versions with existing beta tags, directly increment the pre-release version number
+          for i in $(seq 1 $((${{ github.event.inputs.version-increment }} + 1))); do
+            npm --no-git-tag-version version prerelease --preid=beta
+          done
+
+      - name: Version update (Alpha version - first time)
+        if: ${{ github.event.inputs.release-type == 'alpha' && !contains(steps.get-current-version.outputs.version, 'alpha') }}
+        run: |
+          npm --no-git-tag-version version prerelease --preid=alpha
+          # If a specific increment number is needed, execute additional increments
+          if [ "${{ github.event.inputs.version-increment }}" != "0" ]; then
+            for i in $(seq 1 ${{ github.event.inputs.version-increment }}); do
+              npm --no-git-tag-version version prerelease --preid=alpha
+            done
+          fi
+
+      - name: Version update (Alpha version - increment)
+        if: ${{ github.event.inputs.release-type == 'alpha' && contains(steps.get-current-version.outputs.version, 'alpha') }}
+        run: |
+          # For versions with existing alpha tags, directly increment the pre-release version number
+          for i in $(seq 1 $((${{ github.event.inputs.version-increment }} + 1))); do
+            npm --no-git-tag-version version prerelease --preid=alpha
+          done
+
+      - name: Publish to NPM
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Get new version number
+        id: get-version
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Commit version change
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add package.json
+          git commit -m "chore: publish v${{ steps.get-version.outputs.version }}"
+          git tag v${{ steps.get-version.outputs.version }}
+          git push
+          git push --tags
