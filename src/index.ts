@@ -39,10 +39,10 @@ export default function createServer({ config }: { config?: z.infer<typeof confi
     debug: false,
     noRule: false,
   };
-  
+
   // 如果 token 为空（Smithery 扫描时），使用占位符
   const token = safeConfig.token || "placeholder-for-scanning";
-  
+
   const serverConfig: ServerConfig = {
     token: token,
     url: safeConfig.url || "https://mastergo.com",
@@ -60,19 +60,29 @@ export default function createServer({ config }: { config?: z.infer<typeof confi
     console.log(`Debug mode: enabled`);
   }
 
-  // 创建服务器实例
-  const server = new McpServer({
-    name: "MasterGoMcpServer",
-    version: "0.1.2",
-  });
+  try {
+    // 创建服务器实例
+    const server = new McpServer({
+      name: "MasterGoMcpServer",
+      version: "0.1.2",
+    });
 
-  // 注册工具，传入配置
-  new GetVersionTool().register(server);
-  new GetDslTool(serverConfig).register(server);
-  new GetComponentLinkTool(serverConfig).register(server);
-  new GetMetaTool(serverConfig).register(server);
-  new GetComponentWorkflowTool(serverConfig).register(server);
+    // 注册工具，传入配置
+    try {
+      new GetVersionTool().register(server);
+      new GetDslTool(serverConfig).register(server);
+      new GetComponentLinkTool(serverConfig).register(server);
+      new GetMetaTool(serverConfig).register(server);
+      new GetComponentWorkflowTool(serverConfig).register(server);
+    } catch (toolError) {
+      console.error("Error registering tools:", toolError);
+      throw toolError;
+    }
 
-  // 返回服务器对象
-  return server.server;
+    // 返回服务器对象
+    return server.server;
+  } catch (error) {
+    console.error("Error creating server:", error);
+    throw error;
+  }
 }
