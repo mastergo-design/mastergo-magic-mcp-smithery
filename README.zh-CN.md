@@ -64,10 +64,10 @@ npx @mastergo/magic-mcp --token YOUR_TOKEN --url API_URL --rule RULE_NAME --debu
 - `API_BASE_URL`: API 基础 URL
 - `RULES`: 规则的 JSON 数组 (例如: `'["rule1", "rule2"]'`)
 
-#### 通过 Smithery 市场安装
+### 通过 Smithery 市场安装
 
 
-##### 方式一：通过 Smithery 网站安装
+#### 方式一：通过 Smithery 网站安装
 
 1. 访问 [Smithery 市场](https://smithery.ai/server/master/mastergo-magic-mcp-smithery)
 2. 选择你的 MCP 客户端（如 Claude Desktop、Cursor 等）
