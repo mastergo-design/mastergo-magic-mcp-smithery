@@ -65,11 +65,11 @@ Alternatively, you can use environment variables instead of command line argumen
 - `API_BASE_URL`: API base URL
 - `RULES`: JSON array of rules (e.g., `'["rule1", "rule2"]'`)
 
-#### Installing via Smithery Marketplace
+### Installing via Smithery Marketplace
 
 Smithery is an MCP server marketplace that makes it easy to install and manage MCP services.
 
-##### Method 1: Install via Smithery Website
+#### Method 1: Install via Smithery Website
 
 1. Visit [Smithery Marketplace](https://smithery.ai/server/master/mastergo-magic-mcp-smithery)
 2. Click the "Connect" or "Install" button
