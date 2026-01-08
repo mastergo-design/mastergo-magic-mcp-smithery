@@ -24,6 +24,18 @@ MasterGo Magic MCP 是一个独立的 MCP（Model Context Protocol）服务，�
 4. 找到个人访问令牌
 5. 点击生成令牌
 
+### 权限要求
+
+**重要提示**：如果工具已连接但返回"没有权限"错误，请检查以下条件：
+
+1. **账户版本要求**：
+   - 需要 **团队版** 或 **团队版以上** 的 MasterGo 账户
+   - 个人免费版不支持 MCP 工具访问
+
+2. **文件位置要求**：
+   - 设计文件必须放在 **团队项目** 中
+   - 草稿箱中的文件无法通过 MCP 工具访问
+
 ### 命令行选项
 
 ```
@@ -51,6 +63,16 @@ npx @mastergo/magic-mcp --token YOUR_TOKEN --url API_URL --rule RULE_NAME --debu
 - `MG_MCP_TOKEN` 或 `MASTERGO_API_TOKEN`: MasterGo API 令牌
 - `API_BASE_URL`: API 基础 URL
 - `RULES`: 规则的 JSON 数组 (例如: `'["rule1", "rule2"]'`)
+
+#### 通过 Smithery 市场安装
+
+
+##### 方式一：通过 Smithery 网站安装
+
+1. 访问 [Smithery 市场](https://smithery.ai/server/master/mastergo-magic-mcp-smithery)
+2. 选择你的 MCP 客户端（如 Claude Desktop、Cursor 等）
+4. one-click install 打开对应客户端，弹出tools&mcp 点击install
+5. connect->open->optional setting中填入token->connect
 
 ### LINGMA 使用方法
 
