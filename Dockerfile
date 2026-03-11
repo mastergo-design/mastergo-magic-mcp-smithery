@@ -14,7 +14,7 @@ COPY . .
 RUN npm run build
 
 # Ensure executable permissions
-RUN chmod +x bin/cli.js
+# RUN chmod +x bin/cli.js
 
 # Default command (will be overridden by MCP startCommand)
 CMD ["node", "bin/cli.js"]
